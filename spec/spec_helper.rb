@@ -6,6 +6,8 @@ Mongoid.load!('spec/config/mongoid.yml', :test)
 
 require 'mongration'
 
+Dir[File.join(Dir.pwd, 'spec', 'models', '*.rb')].each { |f| require f }
+
 RSpec.configure do |config|
 
   # These two settings work together to allow you to limit a spec run
