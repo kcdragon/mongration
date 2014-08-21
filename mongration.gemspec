@@ -8,9 +8,9 @@ Gem::Specification.new do |spec|
   spec.version       = Mongration::VERSION
   spec.authors       = ["Mike Dalton"]
   spec.email         = ["michaelcdalton@gmail.com"]
-  spec.summary       = %q{TODO: Write a short summary. Required.}
-  spec.description   = %q{TODO: Write a longer description. Optional.}
-  spec.homepage      = ""
+  spec.summary       = %q{Migrations for Mongoid}
+  spec.description   = %q{Mongration is a tool for migrating data. It is designed to have the same interface as ActiveRecord's migrations but be used with Mongoid instead of a SQL database.}
+  spec.homepage      = "https://github.com/kcdragon/mongration"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")

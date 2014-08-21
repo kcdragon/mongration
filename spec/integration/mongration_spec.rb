@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'application' do
+describe Mongration do
 
   def create(class_name, file_name, up, down)
     migration_contents =

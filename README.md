@@ -1,10 +1,10 @@
 # Mongration
 
-Mongration is a tool for migrating data from one version to the next. It is designed to have the same interface as ActiveRecord's migrations but be used with Mongoid (mongoDB ODM) instead of a SQL-based database.
+Mongration is a tool for migrating data. It is designed to have the same interface as ActiveRecord's migrations but be used with Mongoid instead of a SQL database.
 
-There are only two supported Rake tasks currently, `db:migrate` and `db:migrate:rollback`. It also only supports the numeric-based file names ("001_add_foo_to_bar.rb") and not the date-based file names ("20140101_add_foo_to_bar.rb")
+Currently, there are only two supported Rake tasks, `db:migrate` and `db:migrate:rollback`. It only supports the numeric-based file names ("001_add_foo_to_bar.rb") and not the date-based file names ("20140101_add_foo_to_bar.rb").
 
-There are no generators. Creating the migration file is left to the developer.
+There are no generators; creating the migration file is left to the developer.
 
 ## Installation
 
@@ -24,9 +24,9 @@ Or install it yourself as:
 
 The primary usage will be through the Rake tasks `db:migrate` and `db:migrate:rollback`.
 
-The migrate and rollback functionality can also be accessed programmatically via `Mongration.migrate` and `Mongration.rollback`.
+The migrate and rollback functionality can be accessed programmatically via `Mongration.migrate` and `Mongration.rollback`.
 
-Migration files have the following format:
+Migration files have the following structure:
 
     class AddFoo
       def self.up
