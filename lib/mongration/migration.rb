@@ -31,12 +31,10 @@ module Mongration
     def self.next_migration
       new(version: latest_version + 1)
     end
-    private_class_method :next_migration
 
     def self.latest_version
       latest_migration.version
     end
-    private_class_method :latest_version
 
     def up!
       files.sort_by(&:number).each(&:up)
