@@ -15,7 +15,7 @@ module Mongration
     private
 
     def all_file_names
-      dir = Mongration.configuration.dir
+      dir = Mongration.dir
       Dir[File.join(dir, '*.rb')].map do |path|
         path.split('/').last
       end

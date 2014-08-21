@@ -2,9 +2,10 @@ $LOAD_PATH.unshift(File.dirname(__FILE__))
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), "..", "lib"))
 
 require 'mongoid'
-Mongoid.load!('spec/config/mongoid.yml', :test)
-
 require 'mongration'
+Mongration.configure do |config|
+  config.mongoid_config_path = 'spec/config/mongoid.yml'
+end
 
 Dir[File.join(Dir.pwd, 'spec', 'models', '*.rb')].each { |f| require f }
 

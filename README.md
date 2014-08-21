@@ -9,6 +9,15 @@ Currently, there are only two supported Rake tasks, `db:migrate` and `db:migrate
 
 There are no generators; creating the migration file is left to the developer.
 
+## Support
+
+The following versions of Ruby are supported:
+
+* MRI 2.1
+* MRI 2.0
+* MRI 1.9.3
+* JRuby 1.9
+
 ## Installation
 
 Add this line to your application's Gemfile:

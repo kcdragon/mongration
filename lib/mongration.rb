@@ -28,11 +28,22 @@ module Mongration
   end
 
   # @private
+  def dir
+    configuration.dir
+  end
+
+  private
+
   def configuration
-    @configuration ||= begin
-                         config = Configuration.new
-                         config.dir = File.join('db', 'migrate')
-                         config
-                       end
+    @configuration ||= Configuration.new
+  end
+end
+
+Mongration.configure do |config|
+  config.dir = File.join('db', 'migrate')
+
+  default_mongoid_config_path = File.join('config', 'mongoid.yml')
+  if File.exists?(default_mongoid_config_path)
+    config.mongoid_config_path = default_mongoid_config_path
   end
 end

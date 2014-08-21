@@ -32,7 +32,7 @@ module Mongration
       end
 
       def require_migration
-        dir = Mongration.configuration.dir
+        dir = Mongration.dir
         require(::File.join(Dir.pwd, dir, file_name))
       end
     end
