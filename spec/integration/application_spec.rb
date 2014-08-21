@@ -2,42 +2,59 @@ require 'spec_helper'
 
 describe 'application' do
 
-  def create_first_migration
+  def create(class_name, file_name, up, down)
     migration_contents =
       <<-EOS
-class AddFoo
+class #{class_name}
   def self.up
-    Foo.create!
+    #{up}
   end
 
   def self.down
-    Foo.destroy_all
+    #{down}
   end
 end
 EOS
 
-    File.open('db/migrate/001_add_foo.rb', 'w') do |file|
+    File.open(File.join('db', 'migrate', file_name), 'w') do |file|
       file.write(migration_contents)
     end
+  end
+
+  def create_first_migration
+    create(
+      'AddFoo',
+      '001_add_foo.rb',
+      'Foo.create!',
+      'Foo.destroy_all'
+    )
   end
 
   def create_second_migration
-    migration_contents =
-      <<-EOS
-class AddBar
-  def self.up
-    Bar.create!
+    create(
+      'AddBar',
+      '002_add_bar.rb',
+      'Bar.create!',
+      'Bar.destroy_all'
+    )
   end
 
-  def self.down
-    Bar.destroy_all
+  def create_third_migration
+    create(
+      'AddNameToFoo',
+      '0003_add_name_to_foo.rb',
+      'foo = Foo.first; foo.name = "Test"; foo.save!',
+      'foo = Foo.first; foo.name = ""; foo.save!'
+    )
   end
-end
-EOS
 
-    File.open('db/migrate/002_add_bar.rb', 'w') do |file|
-      file.write(migration_contents)
-    end
+  def create_fourth_migration
+    create(
+      'AddNameToBar',
+      '004_add_name_to_bar.rb',
+      'bar = Bar.first; bar.name = "Test"; bar.save!',
+      'bar = Bar.first; bar.name = ""; bar.save!'
+    )
   end
 
   it 'runs a single migration' do
@@ -94,6 +111,21 @@ EOS
     expect(Foo.count).to eq(1)
   end
 
-  after { FileUtils.rm_rf('db/migrate/001_add_foo.rb') }
-  after { FileUtils.rm_rf('db/migrate/002_add_bar.rb') }
+  it 'migrates files in order' do
+    create_third_migration
+    create_first_migration
+    Mongration.migrate
+
+    foo = Foo.first
+    expect(foo.name).to be_present
+  end
+
+  it 'rollbacks files in order' do
+    create_second_migration
+    create_fourth_migration
+    Mongration.migrate
+    Mongration.rollback
+
+    expect(Bar.count).to eq(0)
+  end
 end

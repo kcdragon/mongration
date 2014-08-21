@@ -1,4 +1,6 @@
 module Mongration
+
+  # @private
   class Migration
     include Mongoid::Document
 
@@ -37,12 +39,12 @@ module Mongration
     private_class_method :latest_version
 
     def up!
-      files.each(&:up)
+      files.sort_by(&:number).each(&:up)
       save!
     end
 
     def down!
-      files.each(&:down)
+      files.sort_by(&:number).reverse.each(&:down)
       destroy
     end
   end

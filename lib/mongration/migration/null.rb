@@ -1,5 +1,7 @@
 module Mongration
   class Migration
+
+    # @private
     class Null
       def version
         0

@@ -1,4 +1,6 @@
 module Mongration
+
+  # @private
   module NextMigrationQuery
     extend self
 
@@ -13,7 +15,8 @@ module Mongration
     private
 
     def all_file_names
-      Dir[File.join('db', 'migrate', '*.rb')].map do |path|
+      dir = Mongration.configuration.dir
+      Dir[File.join(dir, '*.rb')].map do |path|
         path.split('/').last
       end
     end

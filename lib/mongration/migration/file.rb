@@ -1,5 +1,7 @@
 module Mongration
   class Migration
+
+    # @private
     class File
       include Mongoid::Document
 
@@ -17,18 +19,20 @@ module Mongration
         klass.constantize.down
       end
 
+      def number
+        if file_name
+          file_name.split('_').first.to_i
+        end
+      end
+
+      private
+
       def klass
         file_name.chomp('.rb').gsub(/^\d+_/, '').camelize
       end
 
       def require_migration
         require(::File.join(Dir.pwd, 'db', 'migrate', file_name))
-      end
-
-      def number
-        if file_name
-          file_name.split('_').first.to_i
-        end
       end
     end
   end

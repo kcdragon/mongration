@@ -1,7 +1,11 @@
+require 'rake'
+
+require 'mongration/configuration'
 require 'mongration/migration'
 require 'mongration/migration/file'
 require 'mongration/migration/null'
 require 'mongration/next_migration_query'
+require 'mongration/rake_task'
 require 'mongration/version'
 
 module Mongration
@@ -17,5 +21,18 @@ module Mongration
 
   def rollback
     Migration.latest_migration.down!
+  end
+
+  def configure
+    yield configuration if block_given?
+  end
+
+  # @private
+  def configuration
+    @configuration ||= begin
+                         config = Configuration.new
+                         config.dir = File.join('db', 'migrate')
+                         config
+                       end
   end
 end
