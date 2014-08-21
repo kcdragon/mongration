@@ -81,6 +81,19 @@ EOS
     expect(Foo.count).to eq(0)
   end
 
+  it 'does not rollback when there are no migrations' do
+    Foo.create!
+    Mongration.rollback
+    expect(Foo.count).to eq(1)
+  end
+
+  it 'does not migrate when there are no migrations' do
+    create_first_migration
+    Mongration.migrate
+    Mongration.migrate
+    expect(Foo.count).to eq(1)
+  end
+
   after { FileUtils.rm_rf('db/migrate/001_add_foo.rb') }
   after { FileUtils.rm_rf('db/migrate/002_add_bar.rb') }
 end
