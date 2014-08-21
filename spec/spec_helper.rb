@@ -68,7 +68,10 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do
-    Dir.glob('db/migrate/*.rb').each { |f| File.delete(f) }
+    Mongration.configure do |config|
+      config.dir = File.join('spec', 'db', 'migrate')
+    end
+    Dir.glob('spec/db/migrate/*.rb').each { |f| File.delete(f) }
     Mongoid.purge!
   end
 end

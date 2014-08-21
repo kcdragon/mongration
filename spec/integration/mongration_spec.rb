@@ -16,7 +16,7 @@ class #{class_name}
 end
 EOS
 
-    File.open(File.join('db', 'migrate', file_name), 'w') do |file|
+    File.open(File.join('spec', 'db', 'migrate', file_name), 'w') do |file|
       file.write(migration_contents)
     end
   end
