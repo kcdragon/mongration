@@ -5,4 +5,7 @@ RSpec::Core::RakeTask.new(:spec) do |t|
   t.verbose = false
 end
 
-task :default => 'spec'
+require 'tailor/rake_task'
+Tailor::RakeTask.new
+
+task :default => [:spec, :tailor]
