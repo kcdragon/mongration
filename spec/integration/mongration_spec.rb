@@ -2,6 +2,23 @@ require 'spec_helper'
 
 describe Mongration do
 
+  class Foo
+    class << self
+      attr_accessor :instance
+    end
+
+    attr_accessor :name
+  end
+
+  class Bar
+    class << self
+      attr_accessor :instance
+    end
+
+    attr_accessor :name
+  end
+
+
   def create(class_name, file_name, up, down)
     migration_contents =
       <<-EOS
@@ -25,8 +42,8 @@ EOS
     create(
       'AddFoo',
       '001_add_foo.rb',
-      'Foo.create!',
-      'Foo.destroy_all'
+      'Foo.instance = Foo.new',
+      'Foo.instance = nil'
     )
   end
 
@@ -34,8 +51,8 @@ EOS
     create(
       'AddBar',
       '002_add_bar.rb',
-      'Bar.create!',
-      'Bar.destroy_all'
+      'Bar.instance = Bar.new',
+      'Bar.instance = nil'
     )
   end
 
@@ -43,8 +60,8 @@ EOS
     create(
       'AddNameToFoo',
       '0003_add_name_to_foo.rb',
-      'foo = Foo.first; foo.name = "Test"; foo.save!',
-      'foo = Foo.first; foo.name = ""; foo.save!'
+      'foo = Foo.instance; foo.name = "Test"',
+      'foo = Foo.instance; foo.name = ""'
     )
   end
 
@@ -52,8 +69,8 @@ EOS
     create(
       'AddNameToBar',
       '004_add_name_to_bar.rb',
-      'bar = Bar.first; bar.name = "Test"; bar.save!',
-      'bar = Bar.first; bar.name = ""; bar.save!'
+      'bar = Bar.instance; bar.name = "Test"',
+      'bar = Bar.instance; bar.name = ""'
     )
   end
 
@@ -62,7 +79,7 @@ EOS
 
     Mongration.migrate
 
-    expect(Foo.count).to eq(1)
+    expect(Foo.instance).to be_present
   end
 
   it 'skips the first migration and runs a second migration' do
@@ -72,8 +89,8 @@ EOS
     create_second_migration
     Mongration.migrate
 
-    expect(Foo.count).to eq(1)
-    expect(Bar.count).to eq(1)
+    expect(Foo.instance).to be_present
+    expect(Bar.instance).to be_present
   end
 
   it 'rollsback a migration' do
@@ -81,7 +98,7 @@ EOS
     Mongration.migrate
 
     Mongration.rollback
-    expect(Foo.count).to eq(0)
+    expect(Foo.instance).to be_nil
   end
 
   it 'can rollback twice' do
@@ -92,23 +109,23 @@ EOS
     Mongration.migrate
 
     Mongration.rollback
-    expect(Foo.count).to eq(1)
+    expect(Foo.instance).to be_present
 
     Mongration.rollback
-    expect(Foo.count).to eq(0)
+    expect(Foo.instance).to be_nil
   end
 
   it 'does not rollback when there are no migrations' do
-    Foo.create!
+    Foo.instance = Foo.new
     Mongration.rollback
-    expect(Foo.count).to eq(1)
+    expect(Foo.instance).to be_present
   end
 
   it 'does not migrate when there are no migrations' do
     create_first_migration
     Mongration.migrate
     Mongration.migrate
-    expect(Foo.count).to eq(1)
+    expect(Foo.instance).to be_present
   end
 
   it 'migrates files in order' do
@@ -116,7 +133,7 @@ EOS
     create_first_migration
     Mongration.migrate
 
-    foo = Foo.first
+    foo = Foo.instance
     expect(foo.name).to be_present
   end
 
@@ -126,6 +143,6 @@ EOS
     Mongration.migrate
     Mongration.rollback
 
-    expect(Bar.count).to eq(0)
+    expect(Bar.instance).to be_nil
   end
 end

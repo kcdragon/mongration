@@ -1,3 +1,7 @@
+require 'mongoid'
+
+require 'mongration/data_store/mongoid/migration'
+
 module Mongration
   module DataStore
     module Mongoid

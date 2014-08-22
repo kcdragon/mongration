@@ -8,8 +8,8 @@ require 'mongration/null_migration'
 require 'mongration/rake_task'
 require 'mongration/version'
 
-require 'mongration/data_store/mongoid/migration'
 require 'mongration/data_store/mongoid/store'
+require 'mongration/data_store/in_memory/store'
 
 module Mongration
   extend self
