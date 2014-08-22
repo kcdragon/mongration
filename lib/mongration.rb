@@ -1,48 +1,59 @@
 require 'rake'
 
 require 'mongration/configuration'
+require 'mongration/file'
 require 'mongration/migration'
-require 'mongration/migration/null'
 require 'mongration/next_migration_query'
+require 'mongration/null_migration'
 require 'mongration/rake_task'
 require 'mongration/version'
 
 require 'mongration/data_store/mongoid/migration'
+require 'mongration/data_store/mongoid/store'
 
 module Mongration
   extend self
 
   def migrate
-    file_names_to_migrate = NextMigrationQuery.file_names_to_migrate
+    file_names = NextMigrationQuery.file_names
 
-    Migration.
-      next_migration_for(file_names_to_migrate).
-      up!
+    migration = if file_names.present?
+                  data_store.build_migration(
+                    latest_migration.version + 1,
+                    file_names
+                  )
+                else
+                  NullMigration.new
+                end
+
+    Migration.new(migration).up
+    migration.save
   end
 
   def rollback
-    Migration.latest_migration.down!
+    migration = latest_migration
+    Migration.new(migration).down
+    migration.destroy
+  end
+
+  def latest_migration
+    data_store.migrations.sort_by(&:version).reverse.first || NullMigration.new
   end
 
   def configure
     yield configuration if block_given?
   end
 
-  # @private
-  def dir
-    configuration.dir
+  def method_missing(method, *args)
+    if configuration.respond_to?(method, *args)
+      configuration.send(method, *args)
+    else
+      super
+    end
   end
 
-  # @private
-  #
-  # Interface for data_store_class
-  # * .all
-  # * .build(version, file_names)
-  # * #version
-  # * #file_names
-  #
-  def data_store_class
-    configuration.data_store_class
+  def respond_to?(method, *args)
+    super || configuration.respond_to?(method, *args)
   end
 
   private
@@ -53,12 +64,10 @@ module Mongration
 end
 
 Mongration.configure do |config|
-  config.dir = File.join('db', 'migrate')
+  config.dir = ::File.join('db', 'migrate')
 
-  default_mongoid_config_path = File.join('config', 'mongoid.yml')
-  if File.exists?(default_mongoid_config_path)
-    config.mongoid_config_path = default_mongoid_config_path
+  default_mongoid_config_path = ::File.join('config', 'mongoid.yml')
+  if ::File.exists?(default_mongoid_config_path)
+    config.data_store = Mongration::DataStore::Mongoid::Store.new(config_path: default_mongoid_config_path)
   end
-
-  config.data_store_class = Mongration::DataStore::Mongoid::Migration
 end
