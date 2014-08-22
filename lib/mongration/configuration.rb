@@ -4,6 +4,7 @@ module Mongration
   class Configuration
     attr_reader :dir
     attr_writer :err_out
+    attr_accessor :data_store_class
 
     def dir=(dir)
       unless File.exists?(dir)

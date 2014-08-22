@@ -9,7 +9,7 @@ module Mongration
     # @return [Array]
     #
     def file_names_to_migrate
-      all_file_names - Migration.migrated_file_names
+      all_file_names - migrated_file_names
     end
 
     private
@@ -18,6 +18,12 @@ module Mongration
       dir = Mongration.dir
       Dir[File.join(dir, '*.rb')].map do |path|
         path.split('/').last
+      end
+    end
+
+    def migrated_file_names
+      Mongration.data_store_class.all.flat_map do |migration|
+        migration.file_names
       end
     end
   end

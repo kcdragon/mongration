@@ -2,48 +2,59 @@ module Mongration
 
   # @private
   class Migration
-    include Mongoid::Document
-
-    field :version, type: Integer
-
-    embeds_many :files, class_name: 'Mongration::Migration::File'
-
-    def self.migrated_file_names
-      all.flat_map { |migration| migration.files.map(&:file_name) }
-    end
 
     def self.next_migration_for(file_names)
       if file_names.present?
-        migration = next_migration
-        file_names.each do |file_name|
-          migration.files.build(file_name: file_name)
-        end
-        migration
+        migration = Mongration.data_store_class.build(
+          latest_migration.version + 1,
+          file_names
+          )
+        new(migration)
       else
         Null.new
       end
     end
 
     def self.latest_migration
-      Migration.all.desc(:version).first || Null.new
+      migrations = Mongration.data_store_class.all.sort_by(&:version).reverse
+      if migrations.present?
+        new(migrations.first)
+      else
+        Null.new
+      end
     end
 
-    def self.next_migration
-      new(version: latest_version + 1)
+    def initialize(migration)
+      @migration = migration
     end
 
-    def self.latest_version
-      latest_migration.version
+    def version
+      @migration.version
     end
 
     def up!
-      files.sort_by(&:number).each(&:up)
-      save!
+      @migration.file_names.sort_by do |file_name|
+        file_name.split('_').first.to_i
+      end.each do |file_name|
+        dir = Mongration.dir
+        require(::File.join(Dir.pwd, dir, file_name))
+        klass = file_name.chomp('.rb').gsub(/^\d+_/, '').camelize
+        klass.constantize.up
+      end
+
+      @migration.save!
     end
 
     def down!
-      files.sort_by(&:number).reverse.each(&:down)
-      destroy
+      @migration.file_names.sort_by do |file_name|
+        file_name.split('_').first.to_i
+      end.reverse.each do |file_name|
+        dir = Mongration.dir
+        require(::File.join(Dir.pwd, dir, file_name))
+        klass = file_name.chomp('.rb').gsub(/^\d+_/, '').camelize
+        klass.constantize.down
+      end
+      @migration.destroy
     end
   end
 end

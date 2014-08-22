@@ -2,11 +2,12 @@ require 'rake'
 
 require 'mongration/configuration'
 require 'mongration/migration'
-require 'mongration/migration/file'
 require 'mongration/migration/null'
 require 'mongration/next_migration_query'
 require 'mongration/rake_task'
 require 'mongration/version'
+
+require 'mongration/data_store/mongoid/migration'
 
 module Mongration
   extend self
@@ -32,6 +33,18 @@ module Mongration
     configuration.dir
   end
 
+  # @private
+  #
+  # Interface for data_store_class
+  # * .all
+  # * .build(version, file_names)
+  # * #version
+  # * #file_names
+  #
+  def data_store_class
+    configuration.data_store_class
+  end
+
   private
 
   def configuration
@@ -46,4 +59,6 @@ Mongration.configure do |config|
   if File.exists?(default_mongoid_config_path)
     config.mongoid_config_path = default_mongoid_config_path
   end
+
+  config.data_store_class = Mongration::DataStore::Mongoid::Migration
 end
