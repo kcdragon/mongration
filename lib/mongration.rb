@@ -1,4 +1,4 @@
-require 'rake'
+require 'mongration/errors'
 
 require 'mongration/configuration'
 require 'mongration/file'
@@ -66,8 +66,8 @@ end
 Mongration.configure do |config|
   config.dir = ::File.join('db', 'migrate')
 
-  default_mongoid_config_path = ::File.join('config', 'mongoid.yml')
-  if ::File.exists?(default_mongoid_config_path)
-    config.data_store = Mongration::DataStore::Mongoid::Store.new(config_path: default_mongoid_config_path)
+  begin
+    config.data_store = Mongration::DataStore::Mongoid::Store.new
+  rescue Mongration::DataStore::Mongoid::ConfigNotFound
   end
 end

@@ -1,3 +1,5 @@
+require 'rake'
+
 namespace :db do
   task :migrate do
     Mongration.migrate
