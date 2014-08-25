@@ -5,20 +5,22 @@ module Mongration
     end
 
     def up
-      sorted_file_names.each do |file_name|
-        Mongration::File.new(file_name).up
-      end
+      sorted_files.each(&:up)
     end
 
     def down
-      sorted_file_names.reverse.each do |file_name|
-        Mongration::File.new(file_name).down
-      end
+      sorted_files.reverse.each(&:down)
     end
 
-    def sorted_file_names
-      @migration.file_names.sort_by do |file_name|
-        file_name.split('_').first.to_i
+    private
+
+    def sorted_files
+      files.sort
+    end
+
+    def files
+      @migration.file_names.map do |file_name|
+        Mongration::File.new(file_name)
       end
     end
   end

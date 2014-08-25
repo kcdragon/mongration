@@ -2,6 +2,8 @@ module Mongration
 
   # @private
   class File
+    include Comparable
+
     def initialize(file_name)
       @file_name = file_name
 
@@ -14,6 +16,16 @@ module Mongration
 
     def down
       klass.down
+    end
+
+    def <=>(other)
+      number <=> other.number
+    end
+
+    protected
+
+    def number
+      @file_name.split('_').first.to_i
     end
 
     private
