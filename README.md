@@ -27,7 +27,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install mongration
+    $ gem install mongration --pre
 
 ## Usage
 
