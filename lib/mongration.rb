@@ -1,11 +1,13 @@
+require 'mongration/version'
+
 require 'mongration/errors'
 
 require 'mongration/configuration'
 require 'mongration/file'
 require 'mongration/migration'
+require 'mongration/migration_file_writer'
 require 'mongration/null_migration'
 require 'mongration/rake_task'
-require 'mongration/version'
 
 require 'mongration/data_store/mongoid/store'
 require 'mongration/data_store/in_memory/store'
@@ -35,23 +37,10 @@ module Mongration
     migration.destroy
   end
 
-  def create_migration(name)
-    snake_case = name.gsub(/([a-z])([A-Z0-9])/, '\1_\2').downcase
-    file_name = "#{'%.3d' % next_migration_number}_#{snake_case}.rb"
-    class_name = Mongration::File.new(file_name).class_name
-
-    ::File.open(::File.join(dir, file_name), 'w') do |file|
-      file.write(<<EOS
-class #{class_name}
-  def self.up
-  end
-
-  def self.down
-  end
-end
-EOS
-      )
-    end
+  def create_migration(name, options = {})
+    snakecase = name.gsub(/([a-z])([A-Z0-9])/, '\1_\2').downcase
+    file_name = "#{next_migration_number}_#{snakecase}.rb"
+    MigrationFileWriter.write(file_name, { dir: dir }.merge(options))
   end
 
   def configure
@@ -66,11 +55,12 @@ EOS
     else
       latest_file = Mongration::File.latest
 
-      if latest_file
-        latest_file.number + 1
-      else
-        1
-      end
+      number = if latest_file
+                 latest_file.number + 1
+               else
+                 1
+               end
+      '%.3d' % number
     end
   end
 
@@ -97,6 +87,7 @@ end
 
 Mongration.configure do |config|
   config.dir = ::File.join('db', 'migrate')
+  config.timestamps = true
 
   begin
     config.data_store = Mongration::DataStore::Mongoid::Store.new

@@ -47,7 +47,7 @@ describe Mongration do
   end
 
   it 'creates file with migration class' do
-    Mongration.create_migration('add_foo')
+    Mongration.create_migration('add_foo', up: 'puts "up"', down: 'puts "down"')
 
     migration_file_name = File.join('spec', 'db', 'migrate', '001_add_foo.rb')
     contents = File.open(migration_file_name) do |file|
@@ -57,9 +57,11 @@ describe Mongration do
     expect(contents).to eq(<<EOS
 class AddFoo
   def self.up
+    puts "up"
   end
 
   def self.down
+    puts "down"
   end
 end
 EOS
