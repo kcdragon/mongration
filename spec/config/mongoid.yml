@@ -1,6 +1,6 @@
 test:
   sessions:
     default:
-      database: mongoid
+      database: mongration
       hosts:
         - localhost:27017

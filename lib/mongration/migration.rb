@@ -1,4 +1,6 @@
 module Mongration
+
+  # @private
   class Migration
     def initialize(migration)
       @migration = migration

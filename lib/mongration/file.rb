@@ -6,15 +6,15 @@ module Mongration
 
     def initialize(file_name)
       @file_name = file_name
-
-      require_file
     end
 
     def up
+      load_file
       klass.up
     end
 
     def down
+      load_file
       klass.down
     end
 
@@ -22,16 +22,18 @@ module Mongration
       number <=> other.number
     end
 
-    protected
-
     def number
       @file_name.split('_').first.to_i
     end
 
+    def class_name
+      @file_name.chomp('.rb').gsub(/^\d+_/, '').camelize
+    end
+
     private
 
-    def require_file
-      require(::File.join(Dir.pwd, dir, @file_name))
+    def load_file
+      load(::File.join(Dir.pwd, dir, @file_name))
     end
 
     def dir
@@ -39,7 +41,7 @@ module Mongration
     end
 
     def klass
-      @file_name.chomp('.rb').gsub(/^\d+_/, '').camelize.constantize
+      class_name.constantize
     end
   end
 end

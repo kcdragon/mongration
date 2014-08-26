@@ -7,6 +7,10 @@ Mongration.configure do |config|
 end
 
 Dir[File.join(Dir.pwd, 'spec', 'support', '*.rb')].each { |f| require f }
+Dir[File.join(Dir.pwd, 'spec', 'fixtures', '*.rb')].each { |f| require f }
+
+require 'timecop'
+Timecop.safe_mode = true
 
 RSpec.configure do |config|
 
@@ -26,11 +30,6 @@ RSpec.configure do |config|
     # (e.g. via a command-line flag).
     config.default_formatter = 'doc'
   end
-
-  # Print the 10 slowest examples and example groups at the
-  # end of the spec run, to help surface which specs are running
-  # particularly slow.
-  config.profile_examples = 10
 
   # Run specs in random order to surface order dependencies. If you find an
   # order dependency and want to debug it, you can fix the order by providing
@@ -68,11 +67,20 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do
+
+    # clear out migration files created
     dir = File.join('spec', 'db', 'migrate')
     Mongration.configure do |config|
       config.dir = dir
+      config.timestamps = false
     end
-    Dir.glob(File.join(dir, '*.rb')).each { |f| File.delete(f) }
+    Dir.glob(File.join(dir, '*')).each { |f| File.delete(f) }
+
+    # clear out database
     Mongoid.purge!
+
+    # clear out models
+    Foo.instances = []
+    Bar.instances = []
   end
 end
