@@ -66,15 +66,17 @@ RSpec.configure do |config|
     mocks.verify_partial_doubles = true
   end
 
-  config.before(:each) do
-
-    # clear out migration files created
+  def clean_migration_files
     dir = File.join('spec', 'db', 'migrate')
     Mongration.configure do |config|
       config.dir = dir
       config.timestamps = false
     end
     Dir.glob(File.join(dir, '*')).each { |f| File.delete(f) }
+  end
+
+  config.before(:each) do
+    clean_migration_files
 
     # clear out database
     Mongoid.purge!
@@ -82,5 +84,9 @@ RSpec.configure do |config|
     # clear out models
     Foo.instances = []
     Bar.instances = []
+  end
+
+  config.after(:all) do
+    clean_migration_files # prevents tailor from looking in this directory
   end
 end
