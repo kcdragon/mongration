@@ -14,7 +14,7 @@ module Mongration
   extend self
 
   def migrate
-    file_names = all_file_names - migrated_file_names
+    file_names = Mongration::File.all.map(&:file_name) - data_store.migrations.flat_map(&:file_names)
 
     migration = if file_names.present?
                   data_store.build_migration(
@@ -64,7 +64,7 @@ EOS
     if timestamps?
       Time.now.utc.strftime('%Y%m%d%H%M%S').to_i
     else
-      latest_file = all_file_names.map { |file_name| Mongration::File.new(file_name) }.sort.max
+      latest_file = Mongration::File.latest
 
       if latest_file
         latest_file.number + 1
@@ -75,19 +75,7 @@ EOS
   end
 
   def latest_migration
-    data_store.migrations.sort_by(&:version).reverse.first || NullMigration.new
-  end
-
-  def all_file_names
-    Dir[::File.join(dir, '*.rb')].map do |path|
-      path.pathmap('%f')
-    end
-  end
-
-  def migrated_file_names
-    data_store.migrations.flat_map do |migration|
-      migration.file_names
-    end
+    data_store.migrations.max_by(&:version) || NullMigration.new
   end
 
   def configuration
