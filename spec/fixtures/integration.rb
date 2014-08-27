@@ -1,7 +1,7 @@
 module IntegrationFixtures
   def create(file_name, up, down)
     Mongration::MigrationFileWriter.
-      write(file_name, up: up, down: down, dir: Mongration.dir)
+      write(file_name, up: up, down: down, dir: Mongration.configuration.dir)
   end
 
   def foo_create_migration
