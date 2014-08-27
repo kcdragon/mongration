@@ -1,4 +1,6 @@
 module Mongration
+
+  # @private
   class Rollback
 
     def self.perform(migration)
@@ -10,13 +12,13 @@ module Mongration
     end
 
     def perform
-      files.sort.reverse.each(&:down)
+      files_to_rollback.sort.reverse.each(&:down)
       @migration.destroy
     end
 
     private
 
-    def files
+    def files_to_rollback
       @migration.file_names.map do |file_name|
         Mongration::File.new(file_name)
       end

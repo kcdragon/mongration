@@ -1,4 +1,6 @@
 module Mongration
+
+  # @private
   class CreateMigration
 
     def self.perform(name, options = {})
