@@ -1,17 +1,17 @@
 module Mongration
+  class Rollback
 
-  # @private
-  class Migration
+    def self.perform(migration)
+      new(migration).perform
+    end
+
     def initialize(migration)
       @migration = migration
     end
 
-    def up
-      files.sort.each(&:up)
-    end
-
-    def down
+    def perform
       files.sort.reverse.each(&:down)
+      @migration.destroy
     end
 
     private

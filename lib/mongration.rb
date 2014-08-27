@@ -3,11 +3,13 @@ require 'mongration/version'
 require 'mongration/errors'
 
 require 'mongration/configuration'
+require 'mongration/create_migration'
 require 'mongration/file'
-require 'mongration/migration'
+require 'mongration/migrate'
 require 'mongration/migration_file_writer'
 require 'mongration/null_migration'
 require 'mongration/rake_task'
+require 'mongration/rollback'
 
 require 'mongration/data_store/mongoid/store'
 require 'mongration/data_store/in_memory/store'
@@ -16,31 +18,22 @@ module Mongration
   extend self
 
   def migrate
-    file_names = Mongration::File.all.map(&:file_name) - configuration.data_store.migrations.flat_map(&:file_names)
-
-    migration = if file_names.present?
-                  configuration.data_store.build_migration(
-                    latest_migration.version + 1,
-                    file_names
-                  )
-                else
-                  NullMigration.new
-                end
-
-    Migration.new(migration).up
-    migration.save
+    Migrate.perform(
+      latest_migration.version + 1
+    )
   end
 
   def rollback
-    migration = latest_migration
-    Migration.new(migration).down
-    migration.destroy
+    Rollback.perform(
+      latest_migration
+    )
   end
 
   def create_migration(name, options = {})
-    snakecase = name.gsub(/([a-z])([A-Z0-9])/, '\1_\2').downcase
-    file_name = "#{next_migration_number}_#{snakecase}.rb"
-    MigrationFileWriter.write(file_name, { dir: configuration.dir }.merge(options))
+    CreateMigration.perform(
+      name,
+      options
+    )
   end
 
   def configure
@@ -52,21 +45,6 @@ module Mongration
   end
 
   private
-
-  def next_migration_number
-    if configuration.timestamps?
-      Time.now.utc.strftime('%Y%m%d%H%M%S').to_i
-    else
-      latest_file = Mongration::File.latest
-
-      number = if latest_file
-                 latest_file.number + 1
-               else
-                 1
-               end
-      '%.3d' % number
-    end
-  end
 
   def latest_migration
     configuration.data_store.migrations.max_by(&:version) || NullMigration.new
