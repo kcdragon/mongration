@@ -1,6 +1,9 @@
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 
+require 'byebug'
+require 'timecop'
+
 require 'mongration'
 Mongration.configure do |config|
   config.data_store = Mongration::DataStore::Mongoid::Store.new(config_path: File.join('spec', 'config', 'mongoid.yml'))
@@ -9,7 +12,6 @@ end
 Dir[File.join(Dir.pwd, 'spec', 'support', '*.rb')].each { |f| require f }
 Dir[File.join(Dir.pwd, 'spec', 'fixtures', '*.rb')].each { |f| require f }
 
-require 'timecop'
 Timecop.safe_mode = true
 
 RSpec.configure do |config|
