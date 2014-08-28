@@ -12,7 +12,7 @@ module Mongration
         field :created_at, type: Time, default: -> { Time.now }
         field :deleted_at, type: Time
 
-        default_scope where(deleted_at: nil)
+        default_scope -> { where(deleted_at: nil) }
 
         def destroy(*)
           self.deleted_at = Time.now

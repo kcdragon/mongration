@@ -1,4 +1,4 @@
-# Mongration [![Build Status](https://travis-ci.org/kcdragon/mongration.svg?branch=master)](https://travis-ci.org/kcdragon/mongration) [![Code Climate](https://codeclimate.com/github/kcdragon/mongration/badges/gpa.svg)](https://codeclimate.com/github/kcdragon/mongration)
+# Mongration [![Build Status](https://travis-ci.org/kcdragon/mongration.svg?branch=master)](https://travis-ci.org/kcdragon/mongration) [![Code Climate](https://codeclimate.com/github/kcdragon/mongration/badges/gpa.svg)](https://codeclimate.com/github/kcdragon/mongration) [![Coverage Status](https://coveralls.io/repos/kcdragon/mongration/badge.png)](https://coveralls.io/r/kcdragon/mongration)
 
 **ActiveRecord-like Migrations for Mongoid**
 
