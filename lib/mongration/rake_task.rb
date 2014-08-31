@@ -1,16 +1,16 @@
 require 'rake'
 
 namespace :db do
-  task :migrate do
+  task migrate: :environment do
     Mongration.migrate
   end
 
   namespace :migrate do
-    task :rollback do
+    task rollback: :environment do
       Mongration.rollback
     end
 
-    task :create, [:name] do |t, args|
+    task :create, [:name] => [:environment] do |t, args|
       name = args[:name]
       Mongration.create_migration(name)
     end
