@@ -64,7 +64,3 @@ class Bar
 
   attr_accessor :name
 end
-
-RSpec.configure do |config|
-  config.include(IntegrationFixtures)
-end
