@@ -5,6 +5,11 @@ namespace :db do
     Mongration.migrate
   end
 
+  task version: :environment do
+    version = Mongration.version
+    puts "Current version: #{version}"
+  end
+
   namespace :migrate do
     task rollback: :environment do
       Mongration.rollback

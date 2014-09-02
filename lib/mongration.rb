@@ -36,6 +36,10 @@ module Mongration
     )
   end
 
+  def version
+    latest_migration.version
+  end
+
   def configure
     yield configuration if block_given?
   end
