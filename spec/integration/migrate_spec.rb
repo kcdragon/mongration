@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Mongration do
+describe 'Mongration.migrate' do
 
   it 'runs a single migration' do
     foo_create_migration

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Mongration do
+describe 'Mongration.rollback' do
 
   it 'rollsback a migration' do
     foo_create_migration

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Mongration do
+describe 'Mongration.create_migration' do
 
   it 'creates number-based template with CamelCase file name' do
     Mongration.create_migration('AddFoo')
