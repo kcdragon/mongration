@@ -1,5 +1,6 @@
-require 'mongration/version'
+require 'rake'
 
+require 'mongration/version'
 require 'mongration/errors'
 
 require 'mongration/configuration'
