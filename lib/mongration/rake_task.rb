@@ -5,6 +5,11 @@ namespace :db do
     Mongration.migrate
   end
 
+  desc 'Runs #down on all migration files from the most recent migration'
+  task rollback: :environment do
+    Mongration.rollback
+  end
+
   desc 'Returns the version for the most recent migration (i.e. the number of migrations that have been run, not the number of migration files)'
   task version: :environment do
     version = Mongration.version
@@ -12,11 +17,6 @@ namespace :db do
   end
 
   namespace :migrate do
-
-    desc 'Runs #down on all migration files from the most recent migration'
-    task rollback: :environment do
-      Mongration.rollback
-    end
 
     desc 'Creates a new migration file in the migration directory'
     task :create, [:name] => [:environment] do |t, args|

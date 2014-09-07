@@ -4,7 +4,12 @@
 
 Mongration is a tool for migrating data. It is designed to have the same interface as [ActiveRecord](https://github.com/rails/rails/tree/master/activerecord)'s migrations but be used with [Mongoid](https://github.com/mongoid/mongoid) instead of an SQL database.
 
-Currently, there are only two supported Rake tasks, `db:migrate` and `db:migrate:rollback`. There is a third rake task, `db:migrate:create` which takes the place of the `rails generate migration` generator.
+Mongration supports the following rake tasks:
+* `db:migrate` - migrates all pending migrations
+* `db:rollback` - rolls back the most recent migration
+* `db:version` - outputs the numeric identifier for the most migration
+* `db:migrate:create` - takes the place of the `rails generate migration` generator
+* `db:migrate:status` - outputs a table of all files and their migration status
 
 ## Support
 
@@ -31,7 +36,7 @@ Or install it yourself as:
 
 ## Usage
 
-The primary usage will be through the Rake tasks `db:migrate` and `db:migrate:rollback`. Migrate will run all migrations that have not been run before. Rollback will rollback the previous migration.
+The primary usage will be through the Rake tasks `db:migrate` and `db:rollback`. Migrate will run all migrations that have not been run before. Rollback will rollback the previous migration.
 
 Migration files have the following structure:
 
