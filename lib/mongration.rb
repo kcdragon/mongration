@@ -11,12 +11,16 @@ require 'mongration/migration_file_writer'
 require 'mongration/null_migration'
 require 'mongration/rake_task'
 require 'mongration/rollback'
+require 'mongration/status'
 
 require 'mongration/data_store/mongoid/store'
 require 'mongration/data_store/in_memory/store'
 
 module Mongration
   extend self
+  extend Forwardable
+
+  def_delegators :configuration, :dir, :data_store
 
   def migrate
     Migrate.perform(
@@ -39,6 +43,10 @@ module Mongration
 
   def version
     latest_migration.version
+  end
+
+  def status
+    Status.migrations
   end
 
   def configure

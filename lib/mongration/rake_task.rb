@@ -23,5 +23,15 @@ namespace :db do
       name = args[:name]
       Mongration.create_migration(name)
     end
+
+    desc 'Outputs a list of files and whether or not they have been migrated'
+    task status: :environment do
+      migrations = Mongration.status
+      puts "Status\tMigration ID\tMigration Name"
+      puts "-" * 50
+      migrations.each do |migration|
+        puts "#{migration.status}\t#{migration.migration_id}\t#{migration.migration_name}"
+      end
+    end
   end
 end
