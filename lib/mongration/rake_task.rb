@@ -21,7 +21,8 @@ namespace :db do
     desc 'Creates a new migration file in the migration directory'
     task :create, [:name] => [:environment] do |t, args|
       name = args[:name]
-      Mongration.create_migration(name)
+      file_name = Mongration.create_migration(name)
+      puts "Created #{File.join(Mongration.dir, file_name)}"
     end
 
     desc 'Outputs a list of files and whether or not they have been migrated'

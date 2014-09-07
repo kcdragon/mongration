@@ -18,12 +18,13 @@ module Mongration
         file_name,
         { dir: @configuration.dir }.merge(@options)
       )
+      file_name
     end
 
     private
 
     def file_name
-      "#{next_migration_number}_#{snakecase}.rb"
+      @file_name ||= "#{next_migration_number}_#{snakecase}.rb"
     end
 
     def next_migration_number

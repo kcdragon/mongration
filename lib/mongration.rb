@@ -34,6 +34,10 @@ module Mongration
     )
   end
 
+  # Creates a migration with the given name
+  #
+  # @return [String] name of the file created
+  #
   def create_migration(name, options = {})
     CreateMigration.perform(
       name,
