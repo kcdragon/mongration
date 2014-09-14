@@ -9,7 +9,7 @@ require 'mongration/file'
 require 'mongration/migrate'
 require 'mongration/migration_file_writer'
 require 'mongration/null_migration'
-require 'mongration/rake_task'
+require 'mongration/rake_tasks'
 require 'mongration/rollback'
 require 'mongration/status'
 

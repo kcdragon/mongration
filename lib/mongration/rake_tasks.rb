@@ -28,10 +28,10 @@ namespace :db do
     desc 'Outputs a list of files and whether or not they have been migrated'
     task status: :environment do
       migrations = Mongration.status
-      puts "Status\tMigration ID\tMigration Name"
-      puts "-" * 50
+      puts ['Status', 'Migration ID' 'Migration Name'].join("\t")
+      puts '-' * 50
       migrations.each do |migration|
-        puts "#{migration.status}\t#{migration.migration_id}\t#{migration.migration_name}"
+        puts [migration.status, migration.migration_id, migration.migration_name].join("\t")
       end
     end
   end
