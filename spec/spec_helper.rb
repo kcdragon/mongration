@@ -5,6 +5,17 @@ require 'coveralls'
 Coveralls.wear!
 
 require 'timecop'
+Timecop.safe_mode = true
+
+if RUBY_PLATFORM == 'java'
+  require 'ruby-debug'
+else
+  if RUBY_VERSION.to_f >= 2.0
+    require 'byebug'
+  elsif RUBY_VERSION.to_f >= 1.9
+    require 'debugger'
+  end
+end
 
 require 'mongration'
 Mongration.configure do |config|
@@ -13,8 +24,6 @@ end
 
 Dir[File.join(Dir.pwd, 'spec', 'support', '*.rb')].each { |f| require f }
 Dir[File.join(Dir.pwd, 'spec', 'fixtures', '*.rb')].each { |f| require f }
-
-Timecop.safe_mode = true
 
 RSpec.configure do |config|
 
