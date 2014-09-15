@@ -5,9 +5,10 @@ module Mongration
 
     def perform
       return unless Migration.exists?
-      file = Mongration::File.wrap(Migration.all_file_names).sort.last
+      migration = Migration.last
+      file = File.new(migration.file_name)
       file.down
-      Migration.where(file_name: file.file_name).first.destroy
+      migration.destroy
     end
   end
 end

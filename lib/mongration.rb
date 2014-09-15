@@ -4,11 +4,13 @@ require 'rake'
 require 'mongration/version'
 require 'mongration/errors'
 
+require 'mongration/versionable'
+require 'mongration/file'
+require 'mongration/migration'
+
 require 'mongration/configuration'
 require 'mongration/create_migration'
-require 'mongration/file'
 require 'mongration/migrate'
-require 'mongration/migration'
 require 'mongration/migration_file_writer'
 require 'mongration/rake_tasks'
 require 'mongration/rollback'
@@ -21,7 +23,7 @@ module Mongration
   def_delegators :configuration, :dir
 
   def migrate
-    Migrate.perform
+    Migrate.new.perform
   end
 
   def rollback
@@ -41,7 +43,7 @@ module Mongration
 
   def version
     return '0' unless Migration.exists?
-    Mongration::File.wrap(Migration.all_file_names).sort.last.id
+    Migration.last.version
   end
 
   def status

@@ -31,7 +31,7 @@ module Mongration
       if @configuration.timestamps?
         Time.now.utc.strftime('%Y%m%d%H%M%S').to_i
       else
-        latest_file = Mongration::File.latest
+        latest_file = File.last
 
         number = if latest_file
                    latest_file.number + 1

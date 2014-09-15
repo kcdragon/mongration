@@ -34,7 +34,7 @@ EOS
     private
 
     def class_name
-      Mongration::File.new(@file_name).class_name
+      File.new(@file_name).class_name
     end
   end
 end

@@ -2,7 +2,8 @@ module Mongration
 
   # @private
   class Migration
-    include ::Mongoid::Document
+    include Mongoid::Document
+    include Versionable
 
     field :file_name, type: String
 
@@ -11,8 +12,16 @@ module Mongration
 
     default_scope -> { where(deleted_at: nil) }
 
-    def self.all_file_names
+    def self.create_by_file_name(file_name)
+      create(file_name: file_name)
+    end
+
+    def self.file_names
       Migration.pluck(:file_name)
+    end
+
+    def self.last
+      all.to_a.max
     end
 
     def destroy(*)

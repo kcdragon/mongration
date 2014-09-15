@@ -13,14 +13,14 @@ module Mongration
     private
 
     def performed_migrations
-      File.migrated.sort.map do |file|
-        FileStatus.new('up', file.id, file.name)
+      File.migrated.map do |file|
+        FileStatus.new('up', file.version, file.name)
       end
     end
 
     def pending_migrations
-      File.pending.sort.map do |file|
-        FileStatus.new('down', file.id, file.name)
+      File.pending.map do |file|
+        FileStatus.new('down', file.version, file.name)
       end
     end
   end
