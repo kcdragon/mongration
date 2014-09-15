@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-describe Mongration::DataStore::Mongoid do
+describe Mongration::Migration do
 
-  let(:migration) { Mongration::DataStore::Mongoid::Migration.create! }
+  let(:migration) { Mongration::Migration.create! }
 
   describe '#create' do
     it 'sets created at timestamp' do
@@ -19,7 +19,7 @@ describe Mongration::DataStore::Mongoid do
     end
 
     it 'document is not returned in query' do
-      expect(Mongration::DataStore::Mongoid::Migration.count).to eq(0)
+      expect(Mongration::Migration.count).to eq(0)
     end
   end
 end

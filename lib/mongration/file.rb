@@ -23,7 +23,7 @@ module Mongration
     end
 
     def self.migrated_file_names
-      Mongration.data_store.migrated_file_names
+      Migration.all_file_names
     end
 
     def self.latest

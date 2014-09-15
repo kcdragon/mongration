@@ -19,7 +19,7 @@ end
 
 require 'mongration'
 Mongration.configure do |config|
-  config.data_store = Mongration::DataStore::Mongoid::Store.new(config_path: File.join('spec', 'config', 'mongoid.yml'))
+  config.config_path = File.join('spec', 'config', 'mongoid.yml')
 end
 
 Dir[File.join(Dir.pwd, 'spec', 'support', '*.rb')].each { |f| require f }

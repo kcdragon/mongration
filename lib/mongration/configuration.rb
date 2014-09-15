@@ -2,7 +2,14 @@ module Mongration
 
   # @private
   class Configuration
-    attr_reader :dir
+
+    class ConfigNotFound < Errors
+      def initialize(path)
+        super("#{path} cannot be found.")
+      end
+    end
+
+    attr_reader :dir, :config_path
     attr_writer :err_out
     attr_accessor :data_store, :timestamps
 
@@ -12,6 +19,19 @@ module Mongration
       end
 
       @dir = dir
+    end
+
+    def config_path=(config_path)
+      unless ::File.exists?(config_path)
+        raise ConfigNotFound.new(config_path)
+      end
+
+      env = if defined?(Rails)
+              Rails.env
+            else
+              :test
+            end
+      Mongoid.load!(config_path, env)
     end
 
     def timestamps?

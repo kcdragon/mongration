@@ -1,3 +1,4 @@
+require 'mongoid'
 require 'rake'
 
 require 'mongration/version'
@@ -7,30 +8,24 @@ require 'mongration/configuration'
 require 'mongration/create_migration'
 require 'mongration/file'
 require 'mongration/migrate'
+require 'mongration/migration'
 require 'mongration/migration_file_writer'
 require 'mongration/rake_tasks'
 require 'mongration/rollback'
 require 'mongration/status'
 
-require 'mongration/data_store/mongoid/store'
-require 'mongration/data_store/in_memory/store'
-
 module Mongration
   extend self
   extend Forwardable
 
-  def_delegators :configuration, :dir, :data_store
+  def_delegators :configuration, :dir
 
   def migrate
-    Migrate.perform(
-      version + 1
-    )
+    Migrate.perform
   end
 
   def rollback
-    Rollback.new(
-      data_store.latest_migration_file_names
-    ).perform
+    Rollback.new.perform
   end
 
   # Creates a migration with the given name
@@ -45,7 +40,8 @@ module Mongration
   end
 
   def version
-    data_store.latest_migration_version
+    return '0' unless Migration.exists?
+    Mongration::File.wrap(Migration.all_file_names).sort.last.id
   end
 
   def status
@@ -66,7 +62,7 @@ Mongration.configure do |config|
   config.timestamps = true
 
   begin
-    config.data_store = Mongration::DataStore::Mongoid::Store.new
-  rescue Mongration::DataStore::Mongoid::ConfigNotFound
+    config.config_path = ::File.join('config', 'mongoid.yml')
+  rescue Mongration::Configuration::ConfigNotFound
   end
 end

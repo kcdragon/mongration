@@ -3,19 +3,11 @@ module Mongration
   # @private
   class Rollback
 
-    def initialize(file_names)
-      @file_names = file_names
-    end
-
     def perform
-      files_to_rollback.sort.reverse.each(&:down)
-      Mongration.data_store.remove_migration(Mongration.data_store.latest_migration_version)
-    end
-
-    private
-
-    def files_to_rollback
-      Mongration::File.wrap(@file_names)
+      return unless Migration.exists?
+      file = Mongration::File.wrap(Migration.all_file_names).sort.last
+      file.down
+      Migration.where(file_name: file.file_name).first.destroy
     end
   end
 end

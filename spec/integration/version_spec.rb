@@ -4,7 +4,7 @@ describe 'Mongration.version' do
 
   context 'when there are no migrations' do
     it 'version is 0' do
-      expect(Mongration.version).to eq(0)
+      expect(Mongration.version).to eq('0')
     end
   end
 
@@ -14,7 +14,7 @@ describe 'Mongration.version' do
       Mongration.migrate # non-empty migration
       Mongration.migrate # empty migration
 
-      expect(Mongration.version).to eq(1)
+      expect(Mongration.version).to eq('001')
     end
   end
 end

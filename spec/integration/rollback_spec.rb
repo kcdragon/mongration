@@ -12,8 +12,6 @@ describe 'Mongration.rollback' do
 
   it 'can rollback twice' do
     foo_create_migration
-    Mongration.migrate
-
     bar_create_migration
     Mongration.migrate
 
@@ -30,10 +28,12 @@ describe 'Mongration.rollback' do
     expect(Foo.count).to eq(1)
   end
 
-  it 'rollbacks files in order' do
+  it 'rolls back files in order' do
     bar_create_migration
     bar_update_migration
     Mongration.migrate
+
+    Mongration.rollback
     Mongration.rollback
 
     expect(Bar.count).to eq(0)
