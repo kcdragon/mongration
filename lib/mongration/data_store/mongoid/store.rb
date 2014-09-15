@@ -24,16 +24,40 @@ module Mongration
         end
 
         # @private
-        def migrations
-          Migration.all
+        def latest_migration_version
+          return 0 if latest_migration.nil?
+          latest_migration.version
         end
 
         # @private
-        def build_migration(version, file_names)
-          Migration.new(version: version, file_names: file_names)
+        def latest_migration_file_names
+          return [] if latest_migration.nil?
+          latest_migration.file_names
+        end
+
+        # @private
+        def migrated_file_names
+          Migration.all.pluck(:file_names).flatten
+        end
+
+        # @private
+        def store_migration(version, file_names)
+          Migration.create(version: version, file_names: file_names)
+        end
+
+        # @private
+        def remove_migration(version)
+          migration = Migration.where(version: version).first
+          if migration
+            migration.destroy
+          end
         end
 
         private
+
+        def latest_migration
+          Migration.desc(:version).first
+        end
 
         def load_configuration
           unless ::File.exists?(@config_path)

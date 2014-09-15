@@ -23,7 +23,7 @@ module Mongration
     end
 
     def self.migrated_file_names
-      Mongration.data_store.migrations.flat_map(&:file_names)
+      Mongration.data_store.migrated_file_names
     end
 
     def self.latest
@@ -33,7 +33,6 @@ module Mongration
     def self.wrap(file_names)
       file_names.map { |file_name| new(file_name) }
     end
-    private_class_method :wrap
 
     attr_reader :file_name
 

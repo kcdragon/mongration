@@ -8,7 +8,7 @@ describe 'Mongration.version' do
     end
   end
 
-  context 'when there are migration' do
+  context 'when there are migrations' do
     it 'version is equal to the number of non-empty migrations run' do
       foo_create_migration
       Mongration.migrate # non-empty migration

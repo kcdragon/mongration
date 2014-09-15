@@ -8,7 +8,6 @@ require 'mongration/create_migration'
 require 'mongration/file'
 require 'mongration/migrate'
 require 'mongration/migration_file_writer'
-require 'mongration/null_migration'
 require 'mongration/rake_tasks'
 require 'mongration/rollback'
 require 'mongration/status'
@@ -24,14 +23,14 @@ module Mongration
 
   def migrate
     Migrate.perform(
-      latest_migration.version + 1
+      version + 1
     )
   end
 
   def rollback
-    Rollback.perform(
-      latest_migration
-    )
+    Rollback.new(
+      data_store.latest_migration_file_names
+    ).perform
   end
 
   # Creates a migration with the given name
@@ -46,7 +45,7 @@ module Mongration
   end
 
   def version
-    latest_migration.version
+    data_store.latest_migration_version
   end
 
   def status
@@ -59,12 +58,6 @@ module Mongration
 
   def configuration
     @configuration ||= Configuration.new
-  end
-
-  private
-
-  def latest_migration
-    configuration.data_store.migrations.max_by(&:version) || NullMigration.new
   end
 end
 

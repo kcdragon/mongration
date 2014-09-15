@@ -12,24 +12,15 @@ module Mongration
     end
 
     def perform
-      pending_files.sort.each(&:up)
-      migration.save
-    end
+      pending_files = File.pending
 
-    private
+      if !pending_files.empty?
+        pending_files.sort.each(&:up)
 
-    def pending_files
-      File.pending
-    end
-
-    def migration
-      if pending_files.present?
-        Mongration.data_store.build_migration(
+        Mongration.data_store.store_migration(
           @version,
           pending_files.map(&:file_name)
         )
-      else
-        NullMigration.new
       end
     end
   end
