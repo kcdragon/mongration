@@ -4,6 +4,12 @@ describe Mongration::Migration do
 
   let(:migration) { Mongration::Migration.create! }
 
+  describe 'collection name' do
+    it 'is mongration_migrations'do
+      expect(Mongration::Migration.collection.name).to eq('mongration_migrations')
+    end
+  end
+
   describe '#create' do
     it 'sets created at timestamp' do
       expect(migration.created_at).to be_present

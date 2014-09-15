@@ -5,6 +5,8 @@ module Mongration
     include Mongoid::Document
     include Versionable
 
+    store_in({ collection: 'mongration_migrations' })
+
     field :file_name, type: String
 
     field :created_at, type: Time, default: -> { Time.now }
