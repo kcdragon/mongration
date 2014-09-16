@@ -4,13 +4,13 @@ require 'rake'
 require 'mongration/version'
 require 'mongration/errors'
 
-require 'mongration/versionable'
 require 'mongration/file'
 require 'mongration/migration'
 
 require 'mongration/configuration'
 require 'mongration/create_migration'
-require 'mongration/migrate'
+require 'mongration/migrate_down'
+require 'mongration/migrate_up'
 require 'mongration/migration_file_writer'
 require 'mongration/rake_tasks'
 require 'mongration/rollback'
@@ -22,12 +22,27 @@ module Mongration
 
   def_delegators :configuration, :dir
 
-  def migrate
-    Migrate.new.perform
+  def migrate(version = nil)
+    pending = ->(_) { File.pending.map(&:version).include?(_) }
+    migrated = ->(_) { File.migrated.map(&:version).include?(_) }
+
+    case version
+    when nil
+      MigrateUp.new(nil).perform
+
+    when pending
+      MigrateUp.new(version).perform
+
+    when migrated
+      MigrateDown.new(version).perform
+
+    else
+      false
+    end
   end
 
   def rollback
-    Rollback.new.perform
+    Rollback.perform
   end
 
   # Creates a migration with the given name
@@ -43,7 +58,7 @@ module Mongration
 
   def version
     return '0' unless Migration.exists?
-    Migration.last.version
+    File.migrated.last.version
   end
 
   def status

@@ -3,7 +3,6 @@ module Mongration
   # @private
   class Migration
     include Mongoid::Document
-    include Versionable
 
     store_in({ collection: 'mongration_migrations' })
 
@@ -16,6 +15,10 @@ module Mongration
 
     def self.create_by_file_name(file_name)
       create(file_name: file_name)
+    end
+
+    def self.destroy_by_file_name(file_name)
+      where(file_name: file_name).first.destroy
     end
 
     def self.file_names

@@ -2,7 +2,7 @@ module Mongration
 
   # @private
   class File
-    include Versionable
+    include Comparable
 
     def self.all_file_names
       Dir[::File.join(Mongration.dir, '*.rb')].map do |path|
@@ -22,8 +22,12 @@ module Mongration
       Migration.file_names
     end
 
+    def self.all
+      pending + migrated
+    end
+
     def self.last
-      (pending + migrated).max
+      all.max
     end
 
     def self.wrap(file_names)
@@ -39,11 +43,13 @@ module Mongration
     def up
       load_file
       klass.up
+      Migration.create_by_file_name(file_name)
     end
 
     def down
       load_file
       klass.down
+      Migration.destroy_by_file_name(file_name)
     end
 
     def name
@@ -52,6 +58,18 @@ module Mongration
 
     def class_name
       underscored_name.camelize
+    end
+
+    def version
+      file_name.split('_').first
+    end
+
+    def number
+      version.to_i
+    end
+
+    def <=>(other)
+      number <=> other.number
     end
 
     private
