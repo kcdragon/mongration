@@ -1,10 +1,10 @@
 module Mongration
 
   # @private
-  class MigrateUp
+  class MigrateAllUp
 
-    def initialize(version)
-      @version = version
+    def self.perform
+      new.perform
     end
 
     def perform
@@ -15,7 +15,7 @@ module Mongration
     private
 
     def files_to_migrate
-      File.pending.select { |f| f.version <= @version }
+      File.pending
     end
   end
 end

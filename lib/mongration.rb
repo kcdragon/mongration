@@ -7,10 +7,12 @@ require 'mongration/errors'
 require 'mongration/file'
 require 'mongration/migration'
 
-require 'mongration/configuration'
-require 'mongration/create_migration'
+require 'mongration/migrate_all_up'
 require 'mongration/migrate_down'
 require 'mongration/migrate_up'
+
+require 'mongration/configuration'
+require 'mongration/create_migration'
 require 'mongration/migration_file_writer'
 require 'mongration/rake_tasks'
 require 'mongration/rollback'
@@ -28,7 +30,7 @@ module Mongration
 
     case version
     when nil
-      MigrateUp.new(nil).perform
+      MigrateAllUp.perform
 
     when pending
       MigrateUp.new(version).perform

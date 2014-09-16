@@ -24,7 +24,7 @@ describe 'rake tasks' do
     context 'when a VERSION is set' do
       it 'passes the version to migrate' do
         allow(ENV).to receive(:[]).with('VERSION').and_return('001')
-        expect(Mongration).to receive(:migrate).with('001')
+        expect(Mongration).to receive(:migrate).with('001').and_return(true)
         run_task('db:migrate')
       end
 
