@@ -5,7 +5,7 @@ module Mongration
     include Comparable
 
     def self.all_file_names
-      Dir[::File.join(Mongration.dir, '*.rb')].map do |path|
+      Dir[::File.join(Mongration.configuration.dir, '*.rb')].map do |path|
         path.pathmap('%f')
       end
     end
@@ -75,7 +75,7 @@ module Mongration
     private
 
     def load_file
-      load(::File.join(Mongration.dir, @file_name))
+      load(::File.join(Mongration.configuration.dir, @file_name))
     end
 
     def klass

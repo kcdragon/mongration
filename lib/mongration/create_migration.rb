@@ -1,34 +1,33 @@
+require 'mongration/create_migration/migration_file_writer'
+
 module Mongration
 
   # @private
   class CreateMigration
 
     def self.perform(name, options = {})
-      new(name, options, Mongration.configuration).perform
+      new(name, options).perform
     end
 
-    def initialize(name, options, configuration)
-      @name = name
+    def initialize(name, options)
       @options = options
-      @configuration = configuration
+
+      snakecase = name.gsub(/([a-z])([A-Z0-9])/, '\1_\2').downcase
+      @file_name = "#{next_migration_number}_#{snakecase}.rb"
     end
 
     def perform
       MigrationFileWriter.write(
-        file_name,
-        { dir: @configuration.dir }.merge(@options)
+        @file_name,
+        @options
       )
-      file_name
+      @file_name
     end
 
     private
 
-    def file_name
-      @file_name ||= "#{next_migration_number}_#{snakecase}.rb"
-    end
-
     def next_migration_number
-      if @configuration.timestamps?
+      if Mongration.configuration.timestamps?
         Time.now.utc.strftime('%Y%m%d%H%M%S').to_i
       else
         latest_file = File.last
@@ -40,10 +39,6 @@ module Mongration
                  end
         '%.3d' % number
       end
-    end
-
-    def snakecase
-      @name.gsub(/([a-z])([A-Z0-9])/, '\1_\2').downcase
     end
   end
 end

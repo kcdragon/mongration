@@ -27,7 +27,7 @@ namespace :db do
     task :create, [:name] => [:environment] do |t, args|
       name = args[:name]
       file_name = Mongration.create_migration(name)
-      $stdout.puts "Created #{File.join(Mongration.dir, file_name)}"
+      $stdout.puts "Created #{File.join(Mongration.configuration.dir, file_name)}"
     end
 
     desc 'Outputs a list of files and whether or not they have been migrated'

@@ -10,20 +10,22 @@ require 'mongration/migration'
 require 'mongration/migrate_all_up'
 require 'mongration/migrate_down'
 require 'mongration/migrate_up'
-
-require 'mongration/configuration'
-require 'mongration/create_migration'
-require 'mongration/migration_file_writer'
-require 'mongration/rake_tasks'
 require 'mongration/rollback'
+require 'mongration/create_migration'
 require 'mongration/status'
+
+require 'mongration/rake_tasks'
+require 'mongration/configuration'
 
 module Mongration
   extend self
-  extend Forwardable
 
-  def_delegators :configuration, :dir
-
+  # Performs the migrations. If no version is provided, all pending migrations will be run. If a version is provided, migrations will be run to that version (either up or down).
+  #
+  # @param [String, nil] version
+  #
+  # @return [Boolean] true if migration was successful, false otherwise
+  #
   def migrate(version = nil)
     pending = ->(_) { File.pending.map(&:version).include?(_) }
     migrated = ->(_) { File.migrated.map(&:version).include?(_) }
@@ -43,6 +45,10 @@ module Mongration
     end
   end
 
+  # Rolls back (calls `down`) on the most recent migration.
+  #
+  # @return [void]
+  #
   def rollback
     Rollback.perform
   end
@@ -58,11 +64,19 @@ module Mongration
     )
   end
 
+  # Returns the version of most recently run migration. If there are no migrations that have run (all migrations are pending), it returns '0'.
+  #
+  # @return [String] version
+  #
   def version
     return '0' unless Migration.exists?
     File.migrated.last.version
   end
 
+  # Returns the direction (up if it has been run, down otherwise), migration ID (version), and description of the migration.
+  #
+  # @return [Array] migration statuses
+  #
   def status
     Status.migrations
   end
