@@ -31,7 +31,8 @@ describe 'Mongration.migrate(version)' do
       foo_create_migration
       bar_create_migration
 
-      expect(Mongration.migrate('003')).to eq(false)
+      result = Mongration::Result.failed.with('Invalid Version: 003 does not exist.')
+      expect(Mongration.migrate('003')).to eq(result)
     end
   end
 end

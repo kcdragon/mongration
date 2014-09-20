@@ -3,10 +3,10 @@ namespace :db do
   desc 'Runs #up on any migration files found that have not already been run'
   task migrate: :environment do
     version = ENV['VERSION']
-    success = Mongration.migrate(version)
+    result = Mongration.migrate(version)
 
-    if version && !success
-      $stdout.puts "Invalid Version: #{version} does not exist."
+    result.each_message do |message|
+      $stdout.puts message
     end
   end
 

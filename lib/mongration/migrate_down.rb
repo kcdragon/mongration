@@ -9,7 +9,7 @@ module Mongration
 
     def perform
       files_to_rollback.each(&:down)
-      true
+      Result.success
     end
 
     private

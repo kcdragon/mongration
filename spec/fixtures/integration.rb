@@ -1,39 +1,39 @@
 module IntegrationFixtures
-  def create(file_name, up, down)
+  def create_migration(file_name, options = {})
     Mongration::CreateMigration::MigrationFileWriter.
-      write(file_name, up: up, down: down, dir: Mongration.configuration.dir)
+      write(file_name + '.rb', options.merge(dir: Mongration.configuration.dir))
   end
 
   def foo_create_migration
-    create(
-      '001_add_foo.rb',
-      'Foo.instances << Foo.new',
-      'Foo.instances.pop'
-      )
+    create_migration(
+      '001_add_foo',
+      up: 'Foo.instances << Foo.new',
+      down: 'Foo.instances.pop'
+    )
   end
 
   def bar_create_migration
-    create(
-      '002_add_bar.rb',
-      'Bar.instances << Bar.new',
-      'Bar.instances.pop'
-      )
+    create_migration(
+      '002_add_bar',
+      up: 'Bar.instances << Bar.new',
+      down: 'Bar.instances.pop'
+    )
   end
 
   def foo_update_migration
-    create(
-      '0003_add_name_to_foo.rb',
-      'foo = Foo.instances.first; foo.name = "Test"',
-      'foo = Foo.instances.first; foo.name = ""'
-      )
+    create_migration(
+      '0003_add_name_to_foo',
+      up: 'foo = Foo.instances.first; foo.name = "Test"',
+      down: 'foo = Foo.instances.first; foo.name = ""'
+    )
   end
 
   def bar_update_migration
-    create(
-      '004_add_name_to_bar.rb',
-      'bar = Bar.instances.first; bar.name = "Test"',
-      'bar = Bar.instances.first; bar.name = ""'
-      )
+    create_migration(
+      '004_add_name_to_bar',
+      up: 'bar = Bar.instances.first; bar.name = "Test"',
+      down: 'bar = Bar.instances.first; bar.name = ""'
+    )
   end
 end
 

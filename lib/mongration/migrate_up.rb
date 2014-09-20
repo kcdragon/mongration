@@ -8,8 +8,7 @@ module Mongration
     end
 
     def perform
-      files_to_migrate.each(&:up)
-      true
+      Migrator.new(files_to_migrate).perform
     end
 
     private

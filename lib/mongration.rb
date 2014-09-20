@@ -41,7 +41,9 @@ module Mongration
       MigrateDown.new(version).perform
 
     else
-      false
+      Result.
+        failed.
+        with("Invalid Version: #{version} does not exist.")
     end
   end
 
