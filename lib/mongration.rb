@@ -50,7 +50,9 @@ module Mongration
     end
   end
 
-  # Rolls back (calls `down`) on the most recent migration.
+  # Rolls back (calls `down`) on the most recent migration(s).
+  #
+  # @param [Integer] number of migrations to rollback
   #
   # @return [void]
   #
