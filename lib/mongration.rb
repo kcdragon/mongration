@@ -6,10 +6,13 @@ require 'mongration/errors'
 
 require 'mongration/file'
 require 'mongration/migration'
+require 'mongration/result'
 
+require 'mongration/migrator'
 require 'mongration/migrate_all_up'
 require 'mongration/migrate_down'
 require 'mongration/migrate_up'
+
 require 'mongration/rollback'
 require 'mongration/create_migration'
 require 'mongration/status'
@@ -51,8 +54,10 @@ module Mongration
   #
   # @return [void]
   #
-  def rollback
-    Rollback.perform
+  def rollback(step = 1)
+    step.times do
+      Rollback.perform
+    end
   end
 
   # Creates a migration with the given name

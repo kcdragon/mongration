@@ -38,4 +38,14 @@ describe 'Mongration.rollback' do
 
     expect(Bar.count).to eq(0)
   end
+
+  it 'rolls back multiple times when passed a step' do
+    foo_create_migration
+    bar_create_migration
+    Mongration.migrate
+
+    Mongration.rollback(2)
+    expect(Foo.count).to eq(0)
+    expect(Bar.count).to eq(0)
+  end
 end

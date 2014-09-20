@@ -12,7 +12,8 @@ namespace :db do
 
   desc 'Runs #down on all migration files from the most recent migration'
   task rollback: :environment do
-    Mongration.rollback
+    step = ENV['STEP'] ? ENV['STEP'].to_i : 1
+    Mongration.rollback(step)
   end
 
   desc 'Returns the version for the most recent migration (i.e. the number of migrations that have been run, not the number of migration files)'

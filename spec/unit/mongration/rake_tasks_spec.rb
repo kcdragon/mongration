@@ -40,9 +40,19 @@ describe 'rake tasks' do
   end
 
   describe 'db:rollback' do
-    it 'receives rollback' do
-      expect(Mongration).to receive(:rollback)
-      run_task('db:rollback')
+    context 'when not passed a STEP' do
+      it 'receives rollback' do
+        expect(Mongration).to receive(:rollback)
+        run_task('db:rollback')
+      end
+    end
+
+    context 'when passed a STEP of 2' do
+      it 'calls rollback with 2' do
+        allow(ENV).to receive(:[]).with('STEP').and_return('2')
+        expect(Mongration).to receive(:rollback).with(2)
+        run_task('db:rollback')
+      end
     end
   end
 

@@ -8,6 +8,7 @@ Mongration supports the following rake tasks:
 * `db:migrate` - migrates all pending migrations
 * `db:migrate VERSION=123` - moves to the specified version. If the version is greater than the current version, it will move up. If the version is lesser than the current version, it will move down.
 * `db:rollback` - rolls back the most recent migration
+* `db:rollback STEP=N` - rolls back the N most recent migrations
 * `db:version` - outputs the numeric identifier for the most recent migration
 * `db:migrate:create` - takes the place of the `rails generate migration` generator
 * `db:migrate:status` - outputs a table of all files and their migration status
