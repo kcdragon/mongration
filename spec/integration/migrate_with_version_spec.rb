@@ -31,7 +31,7 @@ describe 'Mongration.migrate(version)' do
       foo_create_migration
       bar_create_migration
 
-      expect($stdout).to receive(:puts).with('Invalid Version: 003 does not exist.')
+      expect(Mongration.out).to receive(:puts).with('Invalid Version: 003 does not exist.')
       Mongration.migrate('003')
     end
   end

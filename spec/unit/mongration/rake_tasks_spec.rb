@@ -50,35 +50,35 @@ describe 'rake tasks' do
   describe 'db:version' do
     it 'prints version' do
       allow(Mongration).to receive(:version).and_return(1)
-      expect($stdout).to receive(:puts).with('Current version: 1')
+      expect(Mongration.out).to receive(:puts).with('Current version: 1')
       run_task('db:version')
     end
   end
 
   describe 'db:migrate:create' do
     it 'receives create_migration' do
-      allow($stdout).to receive(:puts)
+      allow(Mongration.out).to receive(:puts)
       expect(Mongration).to receive(:create_migration).with('add_foo').and_return('')
       run_task('db:migrate:create', 'add_foo')
     end
 
     it 'prints file name' do
       allow(Mongration).to receive(:create_migration).and_return('001_add_foo.rb')
-      expect($stdout).to receive(:puts).with('Created spec/db/migrate/001_add_foo.rb')
+      expect(Mongration.out).to receive(:puts).with('Created spec/db/migrate/001_add_foo.rb')
       run_task('db:migrate:create', 'add_foo')
     end
   end
 
   describe 'db:migrate:status' do
     it 'receives status' do
-      allow($stdout).to receive(:puts)
+      allow(Mongration.out).to receive(:puts)
       expect(Mongration).to receive(:status).and_return([])
       run_task('db:migrate:status')
     end
 
     it 'prints migration info' do
       output = []
-      allow($stdout).to receive(:puts) do |arg|
+      allow(Mongration.out).to receive(:puts) do |arg|
         output << arg
       end
 

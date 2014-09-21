@@ -15,7 +15,7 @@ namespace :db do
   desc 'Returns the version for the most recent migration (i.e. the number of migrations that have been run, not the number of migration files)'
   task version: :environment do
     version = Mongration.version
-    $stdout.puts "Current version: #{version}"
+    Mongration.out.puts "Current version: #{version}"
   end
 
   namespace :migrate do
@@ -24,16 +24,16 @@ namespace :db do
     task :create, [:name] => [:environment] do |t, args|
       name = args[:name]
       file_name = Mongration.create_migration(name)
-      $stdout.puts "Created #{File.join(Mongration.configuration.dir, file_name)}"
+      Mongration.out.puts "Created #{File.join(Mongration.configuration.dir, file_name)}"
     end
 
     desc 'Outputs a list of files and whether or not they have been migrated'
     task status: :environment do
       migrations = Mongration.status
-      $stdout.puts ['Status', 'Migration ID' 'Migration Name'].join("\t")
-      $stdout.puts '-' * 50
+      Mongration.out.puts ['Status', 'Migration ID' 'Migration Name'].join("\t")
+      Mongration.out.puts '-' * 50
       migrations.each do |migration|
-        $stdout.puts [migration.status, migration.migration_id, migration.migration_name].join("\t")
+        Mongration.out.puts [migration.status, migration.migration_id, migration.migration_name].join("\t")
       end
     end
   end

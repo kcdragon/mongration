@@ -7,21 +7,19 @@ require 'mongration/errors'
 require 'mongration/file'
 require 'mongration/migration'
 
-require 'mongration/migrate_all_up'
-require 'mongration/migrate_down'
-require 'mongration/migrate_up'
-
-require 'mongration/rollback'
-require 'mongration/create_migration'
-require 'mongration/status'
-
 require 'mongration/rake_tasks'
 require 'mongration/configuration'
 
 module Mongration
   extend self
 
-  autoload :NullOutput, 'mongration/null_output'
+  autoload :CreateMigration, 'mongration/create_migration'
+  autoload :MigrateAllUp,    'mongration/migrate_all_up'
+  autoload :MigrateUp,       'mongration/migrate_up'
+  autoload :MigrateDown,     'mongration/migrate_down'
+  autoload :NullOutput,      'mongration/null_output'
+  autoload :Rollback,        'mongration/rollback'
+  autoload :Status,          'mongration/status'
 
   # Performs the migrations. If no version is provided, all pending migrations will be run. If a version is provided, migrations will be run to that version (either up or down).
   #
@@ -44,7 +42,7 @@ module Mongration
       MigrateDown.new(version).perform
 
     else
-      $stdout.puts("Invalid Version: #{version} does not exist.")
+      out.puts("Invalid Version: #{version} does not exist.")
     end
   end
 
