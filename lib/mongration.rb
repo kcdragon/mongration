@@ -6,9 +6,7 @@ require 'mongration/errors'
 
 require 'mongration/file'
 require 'mongration/migration'
-require 'mongration/result'
 
-require 'mongration/migrator'
 require 'mongration/migrate_all_up'
 require 'mongration/migrate_down'
 require 'mongration/migrate_up'
@@ -22,6 +20,8 @@ require 'mongration/configuration'
 
 module Mongration
   extend self
+
+  autoload :NullOutput, 'mongration/null_output'
 
   # Performs the migrations. If no version is provided, all pending migrations will be run. If a version is provided, migrations will be run to that version (either up or down).
   #
@@ -44,9 +44,7 @@ module Mongration
       MigrateDown.new(version).perform
 
     else
-      Result.
-        failed.
-        with("Invalid Version: #{version} does not exist.")
+      $stdout.puts("Invalid Version: #{version} does not exist.")
     end
   end
 
@@ -88,6 +86,14 @@ module Mongration
   #
   def status
     Status.migrations
+  end
+
+  def out
+    if configuration.silent?
+      @null_output ||= NullOutput.new
+    else
+      $stdout
+    end
   end
 
   def configure

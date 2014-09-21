@@ -3,11 +3,7 @@ namespace :db do
   desc 'Runs #up on any migration files found that have not already been run'
   task migrate: :environment do
     version = ENV['VERSION']
-    result = Mongration.migrate(version)
-
-    result.each_message do |message|
-      $stdout.puts message
-    end
+    Mongration.migrate(version)
   end
 
   desc 'Runs #down on all migration files from the most recent migration'

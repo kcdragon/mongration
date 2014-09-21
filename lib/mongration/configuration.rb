@@ -10,8 +10,7 @@ module Mongration
     end
 
     attr_reader :dir, :config_path
-    attr_writer :err_out
-    attr_accessor :data_store, :timestamps
+    attr_writer :err_out, :timestamps, :silent
 
     def dir=(dir)
       unless ::File.exists?(dir)
@@ -36,6 +35,10 @@ module Mongration
 
     def timestamps?
       @timestamps
+    end
+
+    def silent?
+      @silent
     end
 
     private

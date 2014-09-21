@@ -41,19 +41,18 @@ module Mongration
     end
 
     def up
+      Mongration.out.puts("#{version} #{class_name}: migrating")
+
       load_file
       klass.up
-    rescue => e
-      Result.
-        failed.
-        with("#{version} #{class_name}: migrating").
-        with("#{e.class}: An error has occured, this and all later migrations cancelled")
-    else
+
       Migration.create_by_file_name(file_name)
-      Result.
-        success.
-        with("#{version} #{class_name}: migrating").
-        with("#{version} #{class_name}: migrated")
+      Mongration.out.puts("#{version} #{class_name}: migrated")
+      true
+
+    rescue => e
+      Mongration.out.puts("#{e.class}: An error has occured, this and all later migrations cancelled")
+      false
     end
 
     def down

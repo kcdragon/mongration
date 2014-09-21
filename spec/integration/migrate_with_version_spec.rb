@@ -27,12 +27,12 @@ describe 'Mongration.migrate(version)' do
   end
 
   context 'when the version does not exist' do
-    it 'returns false' do
+    it 'outputs message' do
       foo_create_migration
       bar_create_migration
 
-      result = Mongration::Result.failed.with('Invalid Version: 003 does not exist.')
-      expect(Mongration.migrate('003')).to eq(result)
+      expect($stdout).to receive(:puts).with('Invalid Version: 003 does not exist.')
+      Mongration.migrate('003')
     end
   end
 end

@@ -16,7 +16,7 @@ describe 'rake tasks' do
   describe 'db:migrate' do
     context 'when no VERSION is set' do
       it 'recives migrate with no args' do
-        expect(Mongration).to receive(:migrate).with(nil).and_return(Mongration::Result.success)
+        expect(Mongration).to receive(:migrate).with(nil)
         run_task('db:migrate')
       end
     end
@@ -24,16 +24,7 @@ describe 'rake tasks' do
     context 'when a VERSION is set' do
       it 'passes the version to migrate' do
         allow(ENV).to receive(:[]).with('VERSION').and_return('001')
-        expect(Mongration).to receive(:migrate).with('001').and_return(Mongration::Result.success)
-        run_task('db:migrate')
-      end
-
-      it 'displays message if version does not exist' do
-        allow(ENV).to receive(:[]).with('VERSION').and_return('001')
-
-        message = 'Failed'
-        allow(Mongration).to receive(:migrate).and_return(Mongration::Result.failed.with(message))
-        expect($stdout).to receive(:puts).with(message)
+        expect(Mongration).to receive(:migrate).with('001')
         run_task('db:migrate')
       end
     end

@@ -5,25 +5,19 @@ describe 'Mongration.migrate' do
   context 'when the migration is successful' do
     before do
       foo_create_migration
-      migrate
     end
 
     let(:migrate) { Mongration.migrate }
 
     it 'runs a single migration' do
+      migrate
       expect(Foo.count).to eq(1)
     end
 
-    it 'returns successful result' do
-      expect(migrate.success?).to be(true)
-    end
-
     it 'includes success message' do
-      expect { |b| migrate.each_message(&b) }.
-        to yield_successive_args(
-          '001 AddFoo: migrating',
-          '001 AddFoo: migrated'
-        )
+      expect(Mongration.out).to receive(:puts).with('001 AddFoo: migrating')
+      expect(Mongration.out).to receive(:puts).with('001 AddFoo: migrated')
+      migrate
     end
   end
 
@@ -37,25 +31,19 @@ describe 'Mongration.migrate' do
         '2_migration_without_error',
         up: 'Foo.instances << Foo.new'
       )
-      migrate
     end
 
     let(:migrate) { Mongration.migrate }
 
-    it 'returns failed result' do
-      expect(migrate.failed?).to be(true)
+    it 'does not run later migrations' do
+      migrate
+      expect(Foo.instances).to be_empty
     end
 
     it 'includes failed message' do
-      expect { |b| migrate.each_message(&b) }.
-        to yield_successive_args(
-          '1 MigrationWithError: migrating',
-          /StandardError: An error has occured, this and all later migrations cancelled/
-        )
-    end
-
-    it 'does not run later migrations' do
-      expect(Foo.instances).to be_empty
+      expect(Mongration.out).to receive(:puts).with('1 MigrationWithError: migrating')
+      expect(Mongration.out).to receive(:puts).with(/StandardError: An error has occured, this and all later migrations cancelled/)
+      migrate
     end
   end
 

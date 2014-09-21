@@ -20,6 +20,7 @@ end
 require 'mongration'
 Mongration.configure do |config|
   config.config_path = File.join('spec', 'config', 'mongoid.yml')
+  config.silent = true
 end
 
 Dir[File.join(Dir.pwd, 'spec', 'support', '*.rb')].each { |f| require f }
