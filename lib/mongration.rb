@@ -74,8 +74,11 @@ module Mongration
   # @return [String] version
   #
   def version
-    return '0' unless Migration.exists?
-    File.migrated.last.version
+    if File.migrated.any?
+      File.migrated.last.version
+    else
+      '0'
+    end
   end
 
   # Returns the direction (up if it has been run, down otherwise), migration ID (version), and description of the migration.

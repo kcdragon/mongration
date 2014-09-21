@@ -63,7 +63,7 @@ describe 'rake tasks' do
     end
 
     it 'prints file name' do
-      allow(Mongration).to receive(:create_migration).and_return('001_add_foo.rb')
+      allow(Mongration).to receive(:create_migration).and_return('spec/db/migrate/001_add_foo.rb')
       expect(Mongration.out).to receive(:puts).with('Created spec/db/migrate/001_add_foo.rb')
       run_task('db:migrate:create', 'add_foo')
     end

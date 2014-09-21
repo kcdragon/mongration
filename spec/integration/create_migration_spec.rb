@@ -69,6 +69,6 @@ EOS
   end
 
   it 'returns file name of the migration created' do
-    expect(Mongration.create_migration('add_foo')).to eq('001_add_foo.rb')
+    expect(Mongration.create_migration('add_foo')).to eq(File.join('spec', 'db', 'migrate', '001_add_foo.rb'))
   end
 end

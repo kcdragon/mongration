@@ -21,7 +21,6 @@ module Mongration
         @file_name,
         @options
       )
-      @file_name
     end
 
     private

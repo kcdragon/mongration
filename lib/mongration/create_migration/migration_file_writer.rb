@@ -15,7 +15,8 @@ module Mongration
       end
 
       def write
-        ::File.open(::File.join(Mongration.configuration.dir, @file_name), 'w') do |file|
+        path = ::File.join(Mongration.configuration.dir, @file_name)
+        ::File.open(path, 'w') do |file|
           file.write(<<EOS
 class #{class_name}
   def self.up
@@ -29,6 +30,7 @@ end
 EOS
           )
         end
+        path
       end
 
       private
