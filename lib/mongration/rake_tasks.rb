@@ -22,7 +22,7 @@ namespace :db do
 
     desc 'Creates a new migration file in the migration directory'
     task :create, [:name] => [:environment] do |t, args|
-      name = args[:name]
+      name = args[:name] || ENV['NAME']
       path = Mongration.create_migration(name)
       Mongration.out.puts "Created #{path}"
     end

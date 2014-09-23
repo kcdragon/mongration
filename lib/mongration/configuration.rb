@@ -14,7 +14,7 @@ module Mongration
 
     def dir=(dir)
       unless ::File.exists?(dir)
-        print_warning("Migration Directory #{dir} does not exists.")
+        print_warning("Migration Directory #{dir} does not exist.")
       end
 
       @dir = dir
