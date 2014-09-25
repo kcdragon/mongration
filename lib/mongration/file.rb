@@ -45,20 +45,35 @@ module Mongration
 
       load_file
       klass.up
-
       Migration.create_by_file_name(file_name)
+
       Mongration.out.puts("#{version} #{class_name}: migrated")
       true
 
     rescue => e
-      Mongration.out.puts("#{e.class}: An error has occured, this and all later migrations cancelled")
+      Mongration.out.puts("#{e.inspect}: An error has occured, this and all later migrations cancelled")
+      e.backtrace.each do |line|
+        Mongration.out.puts(line)
+      end
       false
     end
 
     def down
+      Mongration.out.puts("#{version} #{class_name}: reverting")
+
       load_file
       klass.down
       Migration.destroy_by_file_name(file_name)
+
+      Mongration.out.puts("#{version} #{class_name}: reverted")
+      true
+
+    rescue => e
+      Mongration.out.puts("#{e.inspect}: An error has occured, this and all later migrations cancelled")
+      e.backtrace.each do |line|
+        Mongration.out.puts(line)
+      end
+      false
     end
 
     def name

@@ -2,12 +2,39 @@ require 'spec_helper'
 
 describe 'Mongration.rollback' do
 
-  it 'rollsback a migration' do
-    foo_create_migration
-    Mongration.migrate
+  context 'when the rollback is successful' do
+    before do
+      foo_create_migration
+      Mongration.migrate
+    end
 
-    Mongration.rollback
-    expect(Foo.count).to eq(0)
+    it 'rollsback a migration' do
+      Mongration.rollback
+      expect(Foo.count).to eq(0)
+    end
+
+    it 'outputs messaging when starting and finishing the rollback' do
+      expect(Mongration.out).to receive(:puts).with('001 AddFoo: reverting')
+      expect(Mongration.out).to receive(:puts).with('001 AddFoo: reverted')
+      Mongration.rollback
+    end
+  end
+
+  context 'when the rollback is not successful' do
+    before do
+      create_migration(
+        '1_migration_with_error',
+        down: 'raise StandardError'
+      )
+      Mongration.migrate
+    end
+
+    it 'outputs messaging when rollback raises an error' do
+      expect(Mongration.out).to receive(:puts).with('1 MigrationWithError: reverting')
+      expect(Mongration.out).to receive(:puts).with('#<StandardError: StandardError>: An error has occured, this and all later migrations cancelled')
+      allow(Mongration.out).to receive(:puts)
+      Mongration.rollback
+    end
   end
 
   it 'can rollback twice' do

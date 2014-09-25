@@ -42,7 +42,8 @@ describe 'Mongration.migrate' do
 
     it 'includes failed message' do
       expect(Mongration.out).to receive(:puts).with('1 MigrationWithError: migrating')
-      expect(Mongration.out).to receive(:puts).with(/StandardError: An error has occured, this and all later migrations cancelled/)
+      expect(Mongration.out).to receive(:puts).with('#<StandardError: StandardError>: An error has occured, this and all later migrations cancelled')
+      allow(Mongration.out).to receive(:puts)
       migrate
     end
   end
