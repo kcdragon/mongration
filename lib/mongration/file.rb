@@ -41,39 +41,19 @@ module Mongration
     end
 
     def up
-      Mongration.out.puts("#{version} #{class_name}: migrating")
-
-      load_file
-      klass.up
-      Migration.create_by_file_name(file_name)
-
-      Mongration.out.puts("#{version} #{class_name}: migrated")
-      true
-
-    rescue => e
-      Mongration.out.puts("#{e.inspect}: An error has occured, this and all later migrations cancelled")
-      e.backtrace.each do |line|
-        Mongration.out.puts(line)
+      with_summary(:up) do
+        load_file
+        klass.up
+        Migration.create_by_file_name(file_name)
       end
-      false
     end
 
     def down
-      Mongration.out.puts("#{version} #{class_name}: reverting")
-
-      load_file
-      klass.down
-      Migration.destroy_by_file_name(file_name)
-
-      Mongration.out.puts("#{version} #{class_name}: reverted")
-      true
-
-    rescue => e
-      Mongration.out.puts("#{e.inspect}: An error has occured, this and all later migrations cancelled")
-      e.backtrace.each do |line|
-        Mongration.out.puts(line)
+      with_summary(:down) do
+        load_file
+        klass.down
+        Migration.destroy_by_file_name(file_name)
       end
-      false
     end
 
     def name
@@ -96,8 +76,6 @@ module Mongration
       number <=> other.number
     end
 
-    private
-
     def load_file
       load(::File.join(Mongration.configuration.dir, @file_name))
     end
@@ -106,8 +84,34 @@ module Mongration
       class_name.constantize
     end
 
+    private
+
     def underscored_name
       @file_name.chomp('.rb').gsub(/^\d+_/, '')
+    end
+
+    def with_summary(direction)
+      description = "#{version} #{class_name}"
+
+      before, after = nil, nil
+      case direction
+      when :up
+        before, after = 'migrating', 'migrated'
+      when :down
+        before, after = 'reverting', 'reverted'
+      end
+
+      Mongration.out.puts("#{description}: #{before}")
+      yield
+      Mongration.out.puts("#{description}: #{after}")
+      Mongration.out.puts
+      true
+    rescue => e
+      Mongration.out.puts("#{e.inspect}: An error has occured, this and all later migrations cancelled")
+      e.backtrace.each do |line|
+        Mongration.out.puts(line)
+      end
+      false
     end
   end
 end

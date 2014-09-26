@@ -16,6 +16,7 @@ describe 'Mongration.rollback' do
     it 'outputs messaging when starting and finishing the rollback' do
       expect(Mongration.out).to receive(:puts).with('001 AddFoo: reverting')
       expect(Mongration.out).to receive(:puts).with('001 AddFoo: reverted')
+      allow(Mongration.out).to receive(:puts)
       Mongration.rollback
     end
   end

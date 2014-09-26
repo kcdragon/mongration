@@ -17,6 +17,7 @@ describe 'Mongration.migrate' do
     it 'includes success message' do
       expect(Mongration.out).to receive(:puts).with('001 AddFoo: migrating')
       expect(Mongration.out).to receive(:puts).with('001 AddFoo: migrated')
+      allow(Mongration.out).to receive(:puts)
       migrate
     end
   end
