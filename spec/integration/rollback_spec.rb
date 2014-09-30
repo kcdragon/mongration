@@ -34,7 +34,7 @@ describe 'Mongration.rollback' do
       expect(Mongration.out).to receive(:puts).with('1 MigrationWithError: reverting')
       expect(Mongration.out).to receive(:puts).with('#<StandardError: StandardError>: An error has occured, this and all later migrations cancelled')
       allow(Mongration.out).to receive(:puts)
-      Mongration.rollback
+      expect { Mongration.rollback }.to raise_error
     end
   end
 

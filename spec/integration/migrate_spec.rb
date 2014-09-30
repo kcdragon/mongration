@@ -34,7 +34,9 @@ describe 'Mongration.migrate' do
       )
     end
 
-    let(:migrate) { Mongration.migrate }
+    let(:migrate) do
+      expect { Mongration.migrate }.to raise_error
+    end
 
     it 'does not run later migrations' do
       migrate

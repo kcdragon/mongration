@@ -3,10 +3,6 @@ require 'rake'
 
 require 'mongration/version'
 require 'mongration/errors'
-
-require 'mongration/file'
-require 'mongration/migration'
-
 require 'mongration/rake_tasks'
 require 'mongration/configuration'
 
@@ -14,9 +10,9 @@ module Mongration
   extend self
 
   autoload :CreateMigration, 'mongration/create_migration'
-  autoload :MigrateAllUp,    'mongration/migrate_all_up'
-  autoload :MigrateUp,       'mongration/migrate_up'
-  autoload :MigrateDown,     'mongration/migrate_down'
+  autoload :File,            'mongration/file'
+  autoload :Migrate,         'mongration/migrate'
+  autoload :Migration,       'mongration/migration'
   autoload :NullOutput,      'mongration/null_output'
   autoload :Rollback,        'mongration/rollback'
   autoload :Status,          'mongration/status'
@@ -33,13 +29,16 @@ module Mongration
 
     case version
     when nil
-      MigrateAllUp.perform
+      files = File.pending
+      Migrate::Up.new(files).perform
 
     when pending
-      MigrateUp.new(version).perform
+      files = File.pending.select { |f| f.version <= version }
+      Migrate::Up.new(files).perform
 
     when migrated
-      MigrateDown.new(version).perform
+      files = File.migrated.select { |f| f.version > version }.reverse
+      Migrate::Down.new(files).perform
 
     else
       out.puts("Invalid Version: #{version} does not exist.")
@@ -53,9 +52,8 @@ module Mongration
   # @return [void]
   #
   def rollback(step = 1)
-    step.times do
-      Rollback.perform
-    end
+    files = File.migrated.reverse.first(step)
+    Migrate::Down.new(files).perform
   end
 
   # Creates a migration with the given name

@@ -3,6 +3,9 @@ module Mongration
   # @private
   class File
     include Comparable
+    extend Forwardable
+
+    def_delegators :klass, :up, :down
 
     def self.all_file_names
       Dir[::File.join(Mongration.configuration.dir, '*.rb')].map do |path|
@@ -40,22 +43,6 @@ module Mongration
       @file_name = file_name
     end
 
-    def up
-      with_summary(:up) do
-        load_file
-        klass.up
-        Migration.create_by_file_name(file_name)
-      end
-    end
-
-    def down
-      with_summary(:down) do
-        load_file
-        klass.down
-        Migration.destroy_by_file_name(file_name)
-      end
-    end
-
     def name
       underscored_name.gsub('_', ' ')
     end
@@ -76,8 +63,9 @@ module Mongration
       number <=> other.number
     end
 
-    def load_file
-      load(::File.join(Mongration.configuration.dir, @file_name))
+    alias_method :_load, :load
+    def load
+      _load(::File.join(Mongration.configuration.dir, @file_name))
     end
 
     def klass
@@ -88,30 +76,6 @@ module Mongration
 
     def underscored_name
       @file_name.chomp('.rb').gsub(/^\d+_/, '')
-    end
-
-    def with_summary(direction)
-      description = "#{version} #{class_name}"
-
-      before, after = nil, nil
-      case direction
-      when :up
-        before, after = 'migrating', 'migrated'
-      when :down
-        before, after = 'reverting', 'reverted'
-      end
-
-      Mongration.out.puts("#{description}: #{before}")
-      yield
-      Mongration.out.puts("#{description}: #{after}")
-      Mongration.out.puts
-      true
-    rescue => e
-      Mongration.out.puts("#{e.inspect}: An error has occured, this and all later migrations cancelled")
-      e.backtrace.each do |line|
-        Mongration.out.puts(line)
-      end
-      false
     end
   end
 end
