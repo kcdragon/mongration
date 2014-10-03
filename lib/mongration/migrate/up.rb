@@ -13,6 +13,14 @@ module Mongration
       def persist(file)
         Migration.create_by_file_name(file.file_name)
       end
+
+      def before_text
+        'migrating'
+      end
+
+      def after_text
+        'migrated'
+      end
     end
   end
 end

@@ -9,18 +9,33 @@ module Mongration
       def perform
         @files.each do |file|
           file.load
-          migrate_with_summary(file)
+
+          summarize(description_for(file)) do
+            migrate(file)
+          end
+
           persist(file)
         end
       end
 
       private
 
-      def migrate_with_summary(file)
-        direction = self.class.to_s.split('::').last.downcase.to_sym
-        Migrate::Summary.new(file).for(direction) do
-          migrate(file)
+      def summarize(description)
+        Mongration.out.puts("#{description}: #{before_text}")
+
+        begin
+          yield
+        rescue => e
+          Mongration.out.puts("#{e.inspect}: An error has occured, this and all later migrations cancelled")
+          raise e
         end
+
+        Mongration.out.puts("#{description}: #{after_text}")
+        Mongration.out.puts
+      end
+
+      def description_for(file)
+        "#{file.version} #{file.class_name}"
       end
     end
   end
